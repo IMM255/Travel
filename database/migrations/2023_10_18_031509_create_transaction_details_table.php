@@ -13,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('transaction_details', function (Blueprint $table) {
             $table->id();
-            $table->integer('travel_packages_id');
-            $table->integer('users_id')->nullabe();
-            $table->integer('additional_visa');
-            $table->integer('transaction_total');
-            $table->string('transaction_status');
-            //IN CART PENDING,SUCCESS,CANCEL. FAILED
+            $table->integer('transactions_id');
+            $table->string('username');
+            $table->string('nationality');
+            $table->boolean('is_visa');
+            $table->date('doe_passport');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('transaction_details');
     }
 };
