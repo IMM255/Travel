@@ -117,6 +117,5 @@ class TransactionController extends Controller
         $item->delete();
         return redirect()->route('transaction.index');
 
-
     }
 }
