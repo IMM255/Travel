@@ -11,7 +11,7 @@ class TransactionDetail extends Model
     use HasFactory,softDeletes;
 
     protected $fillable = [
-        'transaction_id','username','nationality','is_visa',
+        'transactions_id','username','nationality','is_visa',
         'doe_passport'
     ];
 

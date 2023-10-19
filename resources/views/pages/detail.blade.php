@@ -25,80 +25,70 @@
                     <div class="col-lg-8 pl-lg-0">
                         <div class="card card-details">
                             <h1>
-                                Nusa peninda
+                                {{$item->title}}
                             </h1>
                             <p>
-                                republic of indonesia Raya
+                                {{$item->location}}
                             </p>
+                            @if($item->galleries->count())
                             <div class="gallery">
                                 <div class="xzoom-container">
-                                    <img src="{{url('frontend/images/popular1.jpg')}}" class="xzoom" id="xzoom-default" xoriginal="frontend/images/popular2.jpg" >
+                                    <img
+                                        src="{{ Storage::url($item->galleries->first()->image )}}"
+                                        class="xzoom" id="xzoom-default"
+                                        xoriginal="{{ Storage::url($item->galleries->first()->image )}}" >
                                 </div>
                                 <div class="xzoom-thumb">
-                                    <a href="{{url('frontend/images/popular1.jpg')}}">
-                                        <img src="{{url('frontend/images/popular1.jpg')}}" class="xzoom-gallery" width="128" xpreview="{{url('frontend/images/popular1.jpg')}}">
+                                    @foreach ($item->galleries as $gallery)
+                                    <a href="{{Storage::url($gallery->image)}}">
+                                        <img
+                                            src="{{Storage::url($gallery->image)}}"
+                                            class="xzoom-gallery" width="128"
+                                            xpreview="{{Storage::url($gallery->image)}}">
                                     </a>
-                                    <a href="{{url('frontend/images/popular1.jpg')}}">
-                                        <img src="{{url('frontend/images/popular1.jpg')}}" class="xzoom-gallery" width="128" xpreview="{{url('frontend/images/popular1.jpg')}}">
-                                    </a>
-                                    <a href="{{url('frontend/images/popular1.jpg')}}">
-                                        <img src="{{url('frontend/images/popular1.jpg')}}" class="xzoom-gallery" width="128" xpreview="{{url('frontend/images/popular1.jpg')}}">
-                                    </a>
-                                    <a href="{{url('frontend/images/popular1.jpg')}}">
-                                        <img src="{{url('frontend/images/popular1.jpg')}}" class="xzoom-gallery" width="128" xpreview="{{url('frontend/images/popular1.jpg')}}">
-                                    </a>
-                                    <a href="{{url('frontend/images/popular1.jpg')}}">
-                                        <img src="{{url('frontend/images/popular1.jpg')}}" class="xzoom-gallery"    width="128" xpreview="{{url('frontend/images/popular1.jpg')}}">
-                                    </a>
+                                    @endforeach
                                 </div>
                             </div>
+                            @endif
                             <h2>tentang Wisata</h2>
                             <p>
-                                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                                Magni beatae corporis dolorem laboriosam, cupiditate repellat
-                                nulla maxime nemo consequatur, neque, officiis culpa doloremque.
-                                Voluptates iure incidunt dolores quisquam sapiente culpa?
+                                {!! $item->about !!}
                             </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                Provident id molestiae eaque perspiciatis accusantium expedita
-                                voluptate incidunt maxime ratione laudantium vel mollitia eum
-                                asperiores officia quidem, sit alias hic natus?
-                            </p>
+
                             <div class="features row">
                                 <div class="col-md-4">
                                     <div class="description">
                                         <img
-                                        src="frontend/images/"
+                                        src="{{url('frontend/images/ic_event.png')}}"
                                         alt=""
-                                        class="fetures-image">
+                                        class="features-image">
                                         <div class="description">
                                             <h3>Fetured Event</h3>
-                                            <p>Tari Kecak</p>
+                                            <p>{{$item->featured_event }}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 border-left">
                                     <div class="description">
                                         <img
-                                        src="frontend/images/"
+                                        src="{{url('frontend/images/ic_bahasa.png')}}"
                                         alt=""
-                                        class="fetures-image">
+                                        class="features-image">
                                         <div class="description">
                                             <h3>language</h3>
-                                            <p>bahasa indonesia</p>
+                                            <p>{{ $item->language }}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 border-left">
                                     <div class="description">
                                         <img
-                                        src="frontend/images/"
+                                        src="{{url('frontend/images/ic_foods.png')}}"
                                         alt=""
-                                        class="fetures-image">
+                                        class="features-image">
                                         <div class="description">
                                             <h3>Foods</h3>
-                                            <p>local foods</p>
+                                            <p>{{$item->foods}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -125,33 +115,43 @@
                                 <tr>
                                     <th width="50%">Date of Departure</th>
                                     <td width="50%" class="text-right">
-                                        22 Aug,2019
+                                        {{ \Carbon\Carbon::create($item->date_of_departure)->format('F n, Y') }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th width="50%">Duration</th>
                                     <td width="50%" class="text-right">
-                                        4D 3N
+                                        {{$item->duration}}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th width="50%">Type</th>
                                     <td width="50%" class="text-right">
-                                        Open Trip
+                                        {{$item->type}}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th width="50%">Price</th>
                                     <td width="50%" class="text-right">
-                                        $80,0 / Person
+                                        ${{$item->price}} / Person
                                     </td>
                                 </tr>
                             </table>
                         </div>
                         <div class="join-container">
-                            <a href="{{route('checkout')}}" class="btn btn-block btn-join-now mt-3 py-2">
-                                Join Now
+                            @auth
+                             <form action="{{route('checkout_process',$item->id)}}" method="post">
+                                @csrf
+                                <button class="btn btn-block btn-join-now mt-3 py-2" type="submit">
+                                    Join Now
+                                </button>
+                             </form>
+                            @endauth
+                            @guest
+                            <a href="{{route('login')}}" class="btn btn-block btn-join-now mt-3 py-2">
+                                Login or Register to join
                             </a>
+                            @endguest
                         </div>
                     </div>
                 </div>
