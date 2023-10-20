@@ -8,6 +8,8 @@ use App\Models\TransactionDetail;
 use App\Models\TravelPackage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Mail;
+use App\Mail\TransactionSuccess;
 
 class CheckoutController extends Controller
 {
@@ -68,6 +70,7 @@ class CheckoutController extends Controller
     {
         $request->validate([
             'username' => 'required|string|exists:users,username',
+            'nationality' => 'required|string',
             'is_visa' => 'required|boolean',
             'doe_passport' => 'required'
         ]);
@@ -94,10 +97,19 @@ class CheckoutController extends Controller
 
     public function success(Request $request, $id)
     {
-        $transaction = Transaction::findOrFail($id);
+        $transaction = Transaction::with(['details','travel_package.galleries','user'])
+                    ->findOrFail($id);
         $transaction->transaction_status = 'PENDING';
 
         $transaction->save();
+
+        // return $transaction;
+
+        //kirim email ke user
+        Mail::to($transaction->user)->send(
+            new TransactionSuccess($transaction)
+        );
+
 
         return view('pages.success');
     }
